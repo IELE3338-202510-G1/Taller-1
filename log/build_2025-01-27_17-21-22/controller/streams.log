@@ -1,0 +1,18 @@
+[0.445s] Invoking command in '/home/robotica/ros2_ws/build/controller': PYTHONPATH=/home/robotica/ros2_ws/build/controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/robotica/ros2_ws/install/controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/robotica/ros2_ws/build/controller/build --no-deps symlink_data
+[0.603s] running develop
+[0.682s] running egg_info
+[0.682s] writing controller.egg-info/PKG-INFO
+[0.682s] writing dependency_links to controller.egg-info/dependency_links.txt
+[0.682s] writing entry points to controller.egg-info/entry_points.txt
+[0.682s] writing requirements to controller.egg-info/requires.txt
+[0.682s] writing top-level names to controller.egg-info/top_level.txt
+[0.684s] reading manifest file 'controller.egg-info/SOURCES.txt'
+[0.685s] writing manifest file 'controller.egg-info/SOURCES.txt'
+[0.686s] running build_ext
+[0.686s] Creating /home/robotica/ros2_ws/install/controller/lib/python3.10/site-packages/controller.egg-link (link to .)
+[0.687s] Installing test1 script to /home/robotica/ros2_ws/install/controller/lib/controller
+[0.687s] Installing turtle_bot_teleop script to /home/robotica/ros2_ws/install/controller/lib/controller
+[0.688s] 
+[0.688s] Installed /home/robotica/ros2_ws/build/controller
+[0.688s] running symlink_data
+[0.709s] Invoked command in '/home/robotica/ros2_ws/build/controller' returned '0': PYTHONPATH=/home/robotica/ros2_ws/build/controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/robotica/ros2_ws/install/controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/robotica/ros2_ws/build/controller/build --no-deps symlink_data

@@ -1,0 +1,18 @@
+[0.399s] Invoking command in '/home/robotica/ros2_ws/build/controller': PYTHONPATH=/home/robotica/ros2_ws/build/controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/robotica/ros2_ws/install/controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/robotica/ros2_ws/build/controller/build --no-deps symlink_data --force
+[0.573s] running develop
+[0.654s] running egg_info
+[0.654s] writing controller.egg-info/PKG-INFO
+[0.654s] writing dependency_links to controller.egg-info/dependency_links.txt
+[0.655s] writing entry points to controller.egg-info/entry_points.txt
+[0.655s] writing requirements to controller.egg-info/requires.txt
+[0.655s] writing top-level names to controller.egg-info/top_level.txt
+[0.657s] reading manifest file 'controller.egg-info/SOURCES.txt'
+[0.657s] writing manifest file 'controller.egg-info/SOURCES.txt'
+[0.658s] running build_ext
+[0.659s] Creating /home/robotica/ros2_ws/install/controller/lib/python3.10/site-packages/controller.egg-link (link to .)
+[0.659s] 
+[0.659s] Installed /home/robotica/ros2_ws/build/controller
+[0.659s] running symlink_data
+[0.659s] symbolically linking /home/robotica/ros2_ws/build/controller/resource/controller -> /home/robotica/ros2_ws/install/controller/share/ament_index/resource_index/packages
+[0.659s] symbolically linking /home/robotica/ros2_ws/build/controller/package.xml -> /home/robotica/ros2_ws/install/controller/share/controller
+[0.682s] Invoked command in '/home/robotica/ros2_ws/build/controller' returned '0': PYTHONPATH=/home/robotica/ros2_ws/build/controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/robotica/ros2_ws/install/controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/robotica/ros2_ws/build/controller/build --no-deps symlink_data --force

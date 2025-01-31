@@ -20,8 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            "test1 = controller.test1:main",
             "turtle_bot_teleop = controller.turtle_bot_teleop:main",
-            "test1 = controller.test1:main"
+            "turtle_bot_interface = controller.turtle_bot_interface:main"
         ],
     },
 )

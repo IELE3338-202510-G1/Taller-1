@@ -4,6 +4,7 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import tkinter.messagebox as messagebox
 import tkinter as tk
 from tkinter import filedialog
 import threading
@@ -19,6 +20,9 @@ class TurtleBotInterface(Node):
         # Almacenar la trayectoria
         self.x_data = []
         self.y_data = []
+
+        self.x_vel = []
+        self.z_vel = []
 
         # Crear la ventana principal con Tkinter
         self.root = tk.Tk()
@@ -39,9 +43,23 @@ class TurtleBotInterface(Node):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack()
 
+        # Preguntar si se desea guardar el recorrido al inicio
+        self.save_trajectory = messagebox.askyesno("Guardar Recorrido", "¿Desea guardar el recorrido?")
+
+        # Suscripción a la posición del TurtleBot2
+        self.subscription_vel = self.create_subscription(Twist, "/turtlebot_cmdVel", self.velocity_callback, 10)
+
         # Botón para guardar la gráfica
-        self.save_button = tk.Button(self.root, text="Guardar Gráfica", command=self.save_plot)
-        self.save_button.pack()
+        self.save_image = tk.Button(self.root, text="Guardar Gráfica", command=self.save_plot)
+        self.save_image.pack(side=tk.LEFT, padx=5)
+
+        # Botón para terminar el recorrido y cerrar el programa
+        self.finish_button = tk.Button(self.root, text="Terminar Recorrido", command=self.finish_and_save)
+        self.finish_button.pack(side=tk.LEFT, padx=5)
+
+        # Botón para terminar el recorrido y cerrar el programa
+        self.seleccionar_archivo = tk.Button(self.root, text="Recorrer Archivo", command=self.select_file)
+        self.seleccionar_archivo.pack(side=tk.LEFT, padx=5)
 
         # Iniciar ROS2 en un hilo separado
         self.ros_thread = threading.Thread(target=self.run_ros, daemon=True)
@@ -58,6 +76,12 @@ class TurtleBotInterface(Node):
         self.x_data.append(msg.linear.x)
         self.y_data.append(msg.linear.y)
 
+
+    def velocity_callback(self, msg: Twist):
+        """ Callback para recibir la posición del TurtleBot2 y actualizar los datos """
+        self.x_vel.append(msg.linear.x)
+        self.z_vel.append(msg.angular.z)
+        
     def update_plot(self):
         """ Actualiza la gráfica de manera eficiente """
         self.line.set_xdata(self.x_data)
@@ -69,12 +93,31 @@ class TurtleBotInterface(Node):
 
     def save_plot(self):
         """ Abre una ventana para elegir la ubicación y el nombre del archivo y guarda la gráfica """
-        file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png"), ("All Files", "*.*")])
+        file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", ".png"), ("All Files", ".*")])
         if file_path:
             self.fig.savefig(file_path)
             print(f"Gráfica guardada como {file_path}")
         else:
             print("Guardado cancelado.")
+
+    def finish_and_save(self):
+        """ Guarda el recorrido si el usuario eligió hacerlo y cierra el programa """
+        if self.save_trajectory:  # Si el usuario eligió guardar al inicio
+            file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", ".txt"), ("All Files", ".*")])
+            if file_path:
+                with open(file_path, "w") as f:
+                    f.write("vel_x, vel_z\n")  # Encabezado
+                    for vel_x, vel_z in zip(self.x_vel, self.z_vel):
+                        f.write(f"{vel_x}, {vel_z}\n")
+                print(f"Recorrido guardado en {file_path}")
+
+        print("Cerrando el programa...")
+        self.on_closing()  # Cierra la interfaz y apaga ROS
+
+    def select_file(self):
+        file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=(("Text Files", "*.txt"),))
+        if file_path:
+            print(file_path)
 
     def run_ros(self):
         """ Función para ejecutar rclpy.spin en un hilo separado """

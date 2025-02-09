@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             "test1 = controller.test1:main",
             "turtle_bot_teleop = controller.turtle_bot_teleop:main",
-            "turtle_bot_interface = controller.turtle_bot_interface:main"
+            "turtle_bot_interface = controller.turtle_bot_interface:main",
+            "turtle_bot_player = controller.turtle_bot_player:main"
         ],
     },
 )

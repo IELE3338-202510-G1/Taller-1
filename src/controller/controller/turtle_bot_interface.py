@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
+from pcl_msgs.srv import UpdateFilename
 from geometry_msgs.msg import Twist
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -17,6 +18,11 @@ class TurtleBotInterface(Node):
         # Suscripción a la posición del TurtleBot2
         self.subscription = self.create_subscription(Twist, "/turtlebot_position", self.position_callback, 10)
 
+        # Cliente para el servicio UpdateFilename
+        self.cli = self.create_client(UpdateFilename, 'update_filename')
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Esperando al servicio update_filename...')
+        
         # Almacenar la trayectoria
         self.x_data = []
         self.y_data = []
@@ -115,9 +121,23 @@ class TurtleBotInterface(Node):
         self.on_closing()  # Cierra la interfaz y apaga ROS
 
     def select_file(self):
-        file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=(("Text Files", "*.txt"),))
+        file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=[("Text Files", "*.txt")])
         if file_path:
-            print(file_path)
+            self.get_logger().info(f"Enviando archivo: {file_path}")
+            req = UpdateFilename.Request()
+            req.filename = file_path
+            future = self.cli.call_async(req)
+            future.add_done_callback(self.handle_response)
+
+    def handle_response(self, future):
+        try:
+            response = future.result()
+            if response.success:
+                self.get_logger().info("Archivo enviado con éxito.")
+            #else:
+                #self.get_logger().info("Hubo un problema con la actualización del archivo.")
+        except Exception as e:
+            self.get_logger().error(f"Error al recibir respuesta: {e}")
 
     def run_ros(self):
         """ Función para ejecutar rclpy.spin en un hilo separado """

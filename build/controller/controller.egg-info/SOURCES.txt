@@ -11,6 +11,7 @@ setup.py
 controller/__init__.py
 controller/test1.py
 controller/turtle_bot_interface.py
+controller/turtle_bot_player.py
 controller/turtle_bot_teleop.py
 controller.egg-info/PKG-INFO
 controller.egg-info/SOURCES.txt

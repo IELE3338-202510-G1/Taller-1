@@ -10,6 +10,7 @@ import tkinter as tk
 from tkinter import filedialog
 import threading
 import os
+import time
 
 class TurtleBotInterface(Node):
     def __init__(self):
@@ -27,8 +28,9 @@ class TurtleBotInterface(Node):
         self.x_data = []
         self.y_data = []
 
-        self.x_vel = []
-        self.z_vel = []
+        # Almacenar las velocidades y el tiempo
+        self.velocities = []  # Lista de tuplas (time, vel_x, vel_z)
+        self.start_time = None  # Tiempo de inicio del recorrido
 
         # Crear la ventana principal con Tkinter
         self.root = tk.Tk()
@@ -82,12 +84,17 @@ class TurtleBotInterface(Node):
         self.x_data.append(msg.linear.x)
         self.y_data.append(msg.linear.y)
 
-
     def velocity_callback(self, msg: Twist):
-        """ Callback para recibir la posición del TurtleBot2 y actualizar los datos """
-        self.x_vel.append(msg.linear.x)
-        self.z_vel.append(msg.angular.z)
-        
+        """ Callback para recibir la velocidad del TurtleBot2 y actualizar los datos """
+        if self.start_time is None:
+            self.start_time = time.time()  # Registrar el tiempo de inicio
+
+        # Calcular el tiempo transcurrido desde el inicio
+        current_time = time.time() - self.start_time
+
+        # Almacenar el tiempo y las velocidades
+        self.velocities.append((current_time, msg.linear.x, msg.angular.z))
+
     def update_plot(self):
         """ Actualiza la gráfica de manera eficiente """
         self.line.set_xdata(self.x_data)
@@ -95,7 +102,7 @@ class TurtleBotInterface(Node):
         self.ax.relim()
         self.ax.autoscale_view()
         self.canvas.draw()
-        self.root.after(100, self.update_plot)  # Llamar nuevamente después de 500ms
+        self.root.after(100, self.update_plot)  # Llamar nuevamente después de 100 ms
 
     def save_plot(self):
         """ Abre una ventana para elegir la ubicación y el nombre del archivo y guarda la gráfica """
@@ -112,9 +119,9 @@ class TurtleBotInterface(Node):
             file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", ".txt"), ("All Files", ".*")])
             if file_path:
                 with open(file_path, "w") as f:
-                    f.write("vel_x, vel_z\n")  # Encabezado
-                    for vel_x, vel_z in zip(self.x_vel, self.z_vel):
-                        f.write(f"{vel_x}, {vel_z}\n")
+                    f.write("time,vel_x,vel_z\n")  # Encabezado
+                    for time_, vel_x, vel_z in self.velocities:
+                        f.write(f"{time_}, {vel_x}, {vel_z}\n")
                 print(f"Recorrido guardado en {file_path}")
 
         print("Cerrando el programa...")

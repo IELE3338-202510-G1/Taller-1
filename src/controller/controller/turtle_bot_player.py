@@ -13,22 +13,41 @@ class TurtleBotPlayer(Node):
         self.get_logger().info("TurtleBotPlayer iniciado y esperando archivos...")
 
     def filename_callback(self, request, response):
+        """ Callback del servicio para cargar el archivo de velocidades """
         file_path = request.filename
         self.get_logger().info(f"Recibido archivo: {file_path}")
         
         try:
             with open(file_path, 'r') as file:
                 lines = file.readlines()[1:]  # Omitir encabezado
-                
+                previous_time = 0.0  # Tiempo inicial
+
                 for line in lines:
-                    vel_x, vel_z = map(float, line.strip().split(','))
+                    # Leer tiempo, vel_x y vel_z
+                    time_, vel_x, vel_z = map(float, line.strip().split(','))
+
+                    # Calcular el tiempo que debe esperar antes de enviar el comando
+                    sleep_time = time_ - previous_time
+                    if sleep_time > 0:
+                        try:
+                            time.sleep(sleep_time - 0.005)  # Esperar el tiempo necesario
+                        except:
+                            pass
+
+                    # Publicar el comando de velocidad
                     twist = Twist()
                     twist.linear.x = vel_x
                     twist.angular.z = vel_z
                     self.cmd_vel_pub_.publish(twist)
-                    time.sleep(0.0275)  # Simula el envío pausado de comandos
+
+                    # Actualizar el tiempo anterior
+                    previous_time = time_
+
+            self.get_logger().info("Recorrido completado.")
+            response.success = True
         except Exception as e:
             self.get_logger().error(f"Error al leer el archivo: {e}")
+            response.success = False
             
         return response
 

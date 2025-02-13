@@ -61,29 +61,37 @@ class turtle_bot_teleop(Node):
         self.turn = 0.7   # Velocidad angular inicial
         self.x = 0  # Dirección lineal
         self.th = 0  # Dirección angular
+        self.last_key_pressed = None  # Última tecla procesada
 
         # Configurar un temporizador para ejecutar la función teleop periódicamente
         self.timer_ = self.create_timer(0.01, self.teleop)
 
     def teleop(self):
-        """ Captura la entrada del teclado y publica los comandos de velocidad. """
+        """ Captura la entrada del teclado y publica los comandos de velocidad solo cuando cambian. """
         key = getKey()
 
+        # Solo actualiza si la tecla presionada cambió
         if key in moveBindings:
             self.x , self.th = moveBindings[key]
+            self.publish_velocity()
         elif key in speedBindings:
             self.speed += speedBindings[key][0]
             self.turn += speedBindings[key][1]
             print(f"Velocidad lineal: {self.speed:.2f}, Velocidad angular: {self.turn:.2f}")
-        else:
-            self.x , self.th = 0, 0  # Si no hay tecla, el robot se detiene
-        
-        if key == '\x03':  # Ctrl+C para salir
+        elif key == '\x03':  # Ctrl+C para salir
             self.destroy_node()
             rclpy.shutdown()
             return
+        elif key == '' and self.last_key_pressed is not None:  
+            # Solo detiene el robot si se suelta una tecla
+            self.x , self.th = 0, 0
+            self.publish_velocity()
 
-        # Publicar velocidad
+        # Actualizar la última tecla procesada
+        self.last_key_pressed = key if key else None
+
+    def publish_velocity(self):
+        """ Publica el mensaje de velocidad en el tópico. """
         twist = Twist()
         twist.linear.x = self.x * self.speed
         twist.angular.z = self.th * self.turn

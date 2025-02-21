@@ -59,6 +59,6 @@ El paquete incluye los siguientes nodos:
   ros2 run controller turtle_bot_player
   ```
 ## Nota
-   Es importante ejecutar los tres nodos al tiempo
+   Es importante ejecutar los tres nodos al tiempo.
 
 
